@@ -39,7 +39,7 @@ var command = 'java -jar "' + jarPath + '" ' + arrParams.join(' ') + module.getC
 ## Preparing MIDI file
 There is currently a limitation on the total amount of notes that can be played (~400), you probably wount be able to use midi files that you'll find on the web, because the majority of them is more than 400 notes in length.
 
-But if you still managed to find a suitable midi, keep in mind the fact that midi files are polyphonic, meaning that there can be more than 1 midi track playing at a given time. You have to feed a specific track number to scum-bard in that case.
+But if you still managed to find a suitable midi, keep in mind the fact that midi files are polyphonic, meaning that there can be more than 1 midi track playing at the same time. You have to feed a specific track number to scum-bard in that case.
 
 >
 >There are some sample midi files in /data directory.
