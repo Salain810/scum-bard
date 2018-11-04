@@ -12,6 +12,7 @@ if (args.length != 0) {
     midiFileName = args[0]
     mimdiTrackNumber = args[1]
 } else {
+    console.log('Error: invalid number of arguments')
     process.exit(1)
 }
 
@@ -81,9 +82,13 @@ fs.readFile(__dirname + `/data/${midiFileName}.mid`, "binary", (err, midiBlob) =
     if (!err) {
         let midi = mc.parse(midiBlob)
         // Find chords. Notes with the same time value form an chord.
+        if (!Number.isInteger(mimdiTrackNumber)) mimdiTrackNumber = 0;
         let chords = _.groupBy(midi.tracks[mimdiTrackNumber].notes, (n) => {
             return n.time;
         })
         play(chords)
+    } else {
+        console.log(err.message)
+        process.exit(1)
     }
 })
