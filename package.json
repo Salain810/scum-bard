@@ -1,13 +1,12 @@
 {
-  "name": "music-box",
+  "name": "scum-bard",
   "version": "1.0.0",
-  "description": "",
+  "description": "Scum music box",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "node --experimental-modules index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Paul Rin <megaharts@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "babel": "^6.23.0",
@@ -15,7 +14,6 @@
     "lodash": "^4.17.11",
     "midi-parser-js": "^3.1.4",
     "midiconvert": "^0.4.7",
-    "node-key-sender": "^1.0.10",
-    "parse-gp5": "^1.0.1"
+    "node-key-sender": "^1.0.10"
   }
 }
