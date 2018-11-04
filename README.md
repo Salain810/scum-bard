@@ -5,7 +5,7 @@ Scum bard is a Node.js script wich converts MIDI commands into keyboard key pres
 Currently there is a limitation for a total amount of notes that can be played. Right now it's 400... ish. Under the hood this script executes a jar file and passes in tons of command line arguments in a single batch. OS has a limitation on the maximum command line arguments wich can be passed to an executable, therefore this limits the amount of notes you can play.
 
 The quality of the "output" heavily depends on the midi file.  
-So, for example, if you are using tabbing software to create a tab first and then export it to midi, keep the source tab as simple as you can: e.g.: no odd time signatures, no fancy legatos, dead notes, palm mutes and so on.  
+So, for example, if you are using tabbing software to create a tab first and then export it to midi, keep the source tab as simple as you can: e.g., no odd time signatures, no fancy legatos, dead notes, palm mutes and so on.  
 
 ## Installation
 In order to run this script, you need to have a Node.js installed. You can grab it here https://nodejs.org/en/.
