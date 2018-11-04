@@ -2,10 +2,10 @@
 
 Scum bard is a Node.js script wich converts MIDI commands into keyboard key presses in order to play music instruments in SCUM game.
 
-Currently there is a limitation for a total amount of notes that can be played. Right now it's 400... ish. Under the hood this script executes a jar file and passes in tons of command line arguments in a single batch. OS has a limitation on the maximum command line arguments wich can be passed to a an exutable, therefore this fact limits the amount of notes you can play.
+Currently there is a limitation for a total amount of notes that can be played. Right now it's 400... ish. Under the hood this script executes a jar file and passes in tons of command line arguments in a single batch. OS has a limitation on the maximum command line arguments wich can be passed to an executable, therefore this limits the amount of notes you can play.
 
 The quality of the "output" heavily depends on the midi file.  
-So, for example, if you are using tabbing software to create a tab first and then export it to midi, keep the source tab as simple as you can: e.g.: no odd time signatures, no fancy legatos, dead notes, palm mutes and so on.  
+So, for example, if you are using tabbing software to create a tab first and then export it to midi, keep the source tab as simple as you can: e.g., no odd time signatures, no fancy legatos, dead notes, palm mutes and so on.  
 
 ## Installation
 In order to run this script, you need to have a Node.js installed. You can grab it here https://nodejs.org/en/.
@@ -37,9 +37,9 @@ var command = 'java -jar "' + jarPath + '" ' + arrParams.join(' ') + module.getC
 ```
 
 ## Preparing MIDI file
-Because there is currently a limitation on the total amount of notes that can be played (~400), you probably wount be able to use midi files that you'll find on the web, because the majority of them is more than 400 notes in length.
+There is currently a limitation on the total amount of notes that can be played (~400), you probably wount be able to use midi files that you'll find on the web, because the majority of them is more than 400 notes in length.
 
-But if you still managed to find a suitable midi, keep in mind the fact that midi files are polyphonic, meaning that there is more than 1 midi track can be playing at a given time. You have to feed a specific track number to scum-bard in that case.
+But if you still managed to find a suitable midi, keep in mind the fact that midi files are polyphonic, meaning that there can be more than 1 midi track playing at the same time. You have to feed a specific track number to scum-bard in that case.
 
 >
 >There are some sample midi files in /data directory.
