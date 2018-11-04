@@ -52,23 +52,23 @@ function play(newChunk) {
             ks.batchTypeKey(keyName, ks.BATCH_EVENT_KEY_UP)
             notesCount++
         } else {
-            // Accord
-            // console.log('----- accord -----')
-            let accord = [] // notes in accord
-            let keyBoardAccord = [] // notes mapped to keyboard keys
-            let duration = 0 // accord duration in ms
+            // Chord
+            // console.log('----- chord -----')
+            let chord = [] // notes in chord
+            let keyBoardChord = [] // notes mapped to keyboard keys
+            let duration = 0 // chord duration in ms
             for (const note of key) {
                 // console.log('note: ' + musicNotation(note.midi))
                 // console.log('duration: ' + note.duration * 1000)
-                accord.push(musicNotation(note.midi))
-                keyBoardAccord.push(noteToKey.get(musicNotation(note.midi)))
+                chord.push(musicNotation(note.midi))
+                keyBoardChord.push(noteToKey.get(musicNotation(note.midi)))
                 duration = note.duration * 1000 // to get ms
                 notesCount++
             }
-            // console.log('Accord notes: ' + accord)
+            // console.log('chord notes: ' + chord)
             // console.log('Length: ' + key.length)
-            ks.batchTypeCombination(keyBoardAccord, duration, ks.BATCH_EVENT_KEY_DOWN)
-            ks.batchTypeCombination(keyBoardAccord, ks.BATCH_EVENT_KEY_UP)
+            ks.batchTypeCombination(keyBoardChord, duration, ks.BATCH_EVENT_KEY_DOWN)
+            ks.batchTypeCombination(keyBoardChord, ks.BATCH_EVENT_KEY_UP)
         }
     })
     ks.sendBatch().then(() => {
@@ -80,7 +80,7 @@ function play(newChunk) {
 fs.readFile(__dirname + `/data/${midiFileName}.mid`, "binary", (err, midiBlob) => {
     if (!err) {
         let midi = mc.parse(midiBlob)
-        // Find accords. Notes with the same time value form an accord.
+        // Find chords. Notes with the same time value form an chord.
         let chords = _.groupBy(midi.tracks[mimdiTrackNumber].notes, (n) => {
             return n.time;
         })
