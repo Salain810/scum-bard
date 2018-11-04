@@ -1,0 +1,89 @@
+const ks = require('node-key-sender')
+const fs = require('fs')
+const mc = require('midiconvert')
+const _ = require('lodash')
+const musicNotation = require('./midi')
+
+// Get command line args
+const args = process.argv.slice(2)
+let midiFileName = '' // MIDI file to read
+let mimdiTrackNumber = 0 // MIDI track number to play
+if (args.length != 0) {
+    midiFileName = args[0]
+    mimdiTrackNumber = args[1]
+} else {
+    process.exit(1)
+}
+
+// Default key mappings
+let noteToKey = new Map()
+noteToKey.set('c', 'r')
+noteToKey.set('c#', '5')
+noteToKey.set('d', 't')
+noteToKey.set('d#', '6')
+noteToKey.set('e', 'y')
+noteToKey.set('f', 'u')
+noteToKey.set('f#', '8')
+noteToKey.set('g', 'i')
+noteToKey.set('g#', '9')
+noteToKey.set('a', 'o')
+noteToKey.set('a#', '0')
+noteToKey.set('b', 'p')
+
+ks.setOption('globalDelayPressMillisec', 0)
+
+/**
+ * @function  play
+ * @param {Object} newChunk Parsed MIDI object
+ */
+function play(newChunk) {
+    ks.startBatch()
+    let notesCount = 0
+    _.forEach(newChunk, (key, value) => {
+        // Single note
+        if (key.length == 1) {
+            let noteDuration = key[0].duration * 1000 // to get ms 
+            let noteName = musicNotation(key[0].midi)
+            let keyName = noteToKey.get(noteName)
+            // console.log('----- single note ------')
+            // console.log('note: ' + noteName)
+            // console.log('duration: ' + noteDuration)
+            ks.batchTypeKey(keyName, noteDuration, ks.BATCH_EVENT_KEY_DOWN)
+            ks.batchTypeKey(keyName, ks.BATCH_EVENT_KEY_UP)
+            notesCount++
+        } else {
+            // Accord
+            // console.log('----- accord -----')
+            let accord = [] // notes in accord
+            let keyBoardAccord = [] // notes mapped to keyboard keys
+            let duration = 0 // accord duration in ms
+            for (const note of key) {
+                // console.log('note: ' + musicNotation(note.midi))
+                // console.log('duration: ' + note.duration * 1000)
+                accord.push(musicNotation(note.midi))
+                keyBoardAccord.push(noteToKey.get(musicNotation(note.midi)))
+                duration = note.duration * 1000 // to get ms
+                notesCount++
+            }
+            // console.log('Accord notes: ' + accord)
+            // console.log('Length: ' + key.length)
+            ks.batchTypeCombination(keyBoardAccord, duration, ks.BATCH_EVENT_KEY_DOWN)
+            ks.batchTypeCombination(keyBoardAccord, ks.BATCH_EVENT_KEY_UP)
+        }
+    })
+    ks.sendBatch().then(() => {
+        console.log('\nTotal notes count: ' + notesCount)
+    })
+}
+
+
+fs.readFile(__dirname + `/data/${midiFileName}.mid`, "binary", (err, midiBlob) => {
+    if (!err) {
+        let midi = mc.parse(midiBlob)
+        // Find accords. Notes with the same time value form an accord.
+        let chords = _.groupBy(midi.tracks[mimdiTrackNumber].notes, (n) => {
+            return n.time;
+        })
+        play(chords)
+    }
+})
