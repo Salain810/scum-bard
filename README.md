@@ -9,6 +9,7 @@ So, for example, if you are using tabbing software to create a tab first and the
 
 ## Installation
 In order to run this script, you need to have a Node.js installed. You can grab it here https://nodejs.org/en/.
+If you have no JRE installed, grab it from Oracle's website.
 
 ### Clone this repo
 To clone this repo run:
