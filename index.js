@@ -61,20 +61,20 @@ function play(newChunk) {
             for (const note of key) {
                 // console.log('note: ' + musicNotation(note.midi))
                 // console.log('duration: ' + note.duration * 1000)
-                chord.push(musicNotation(note.midi))
+                // chord.push(musicNotation(note.midi))
                 keyBoardChord.push(noteToKey.get(musicNotation(note.midi)))
                 duration = note.duration * 1000 // to get ms
                 notesCount++
             }
-            // console.log('chord notes: ' + chord)
-            // console.log('Length: ' + key.length)
+            console.log('chord notes: ' + chord)
+            console.log('Length: ' + key.length)
             ks.batchTypeCombination(keyBoardChord, duration, ks.BATCH_EVENT_KEY_DOWN)
             ks.batchTypeCombination(keyBoardChord, ks.BATCH_EVENT_KEY_UP)
         }
     })
-    ks.sendBatch().then(() => {
-        console.log('\nTotal notes count: ' + notesCount)
-    })
+    console.log(`\nTotal notes: ${notesCount}`)
+    const prom = ks.sendBatch()
+    return prom
 }
 
 
@@ -82,10 +82,14 @@ fs.readFile(__dirname + `/data/${midiFileName}.mid`, "binary", (err, midiBlob) =
     if (!err) {
         let midi = mc.parse(midiBlob)
         // Find chords. Notes with the same time value form an chord.
-        if (!Number.isInteger(midiTrackNumber)) midiTrackNumber = 0;
         let chords = _.groupBy(midi.tracks[midiTrackNumber].notes, (n) => {
             return n.time;
         })
+        // No chords found
+        if (chords == '') {
+            chords = midi.tracks[midiTrackNumber]
+        }
+        //console.log(chords)
         play(chords)
     } else {
         console.log(err.message)
