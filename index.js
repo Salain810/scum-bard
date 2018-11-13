@@ -1,8 +1,8 @@
-const ks = require('node-key-sender')
+const ks = require('./node-key-sender/key-sender')
 const fs = require('fs')
 const mc = require('midiconvert')
 const _ = require('lodash')
-const musicNotation = require('./midi')
+const midi = require('./midi')
 
 // Get command line args
 const args = process.argv.slice(2)
@@ -31,7 +31,7 @@ noteToKey.set('a', 'o')
 noteToKey.set('a#', '0')
 noteToKey.set('b', 'p')
 
-ks.setOption('globalDelayPressMillisec', 0)
+//ks.setOption('globalDelayPressMillisec', 0)
 
 /**
  * @function  play
@@ -44,7 +44,7 @@ function play(newChunk) {
         // Single note
         if (key.length == 1) {
             let noteDuration = key[0].duration * 1000 // to get ms 
-            let noteName = musicNotation(key[0].midi)
+            let noteName = midi.getMusicNotation(key[0].midi)
             let keyName = noteToKey.get(noteName)
             // console.log('----- single note ------')
             // console.log('note: ' + noteName)
@@ -62,12 +62,12 @@ function play(newChunk) {
                 // console.log('note: ' + musicNotation(note.midi))
                 // console.log('duration: ' + note.duration * 1000)
                 // chord.push(musicNotation(note.midi))
-                keyBoardChord.push(noteToKey.get(musicNotation(note.midi)))
+                keyBoardChord.push(noteToKey.get(midi.getMusicNotation(note.midi)))
                 duration = note.duration * 1000 // to get ms
                 notesCount++
             }
-            console.log('chord notes: ' + chord)
-            console.log('Length: ' + key.length)
+            //console.log('chord notes: ' + chord)
+            //console.log('Length: ' + key.length)
             ks.batchTypeCombination(keyBoardChord, duration, ks.BATCH_EVENT_KEY_DOWN)
             ks.batchTypeCombination(keyBoardChord, ks.BATCH_EVENT_KEY_UP)
         }

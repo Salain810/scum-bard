@@ -28,4 +28,14 @@ const getMusicNotation = (midiNote) => {
     return midiToNotes.get(midiNote);
 }
 
-module.exports = getMusicNotation
+const getNoteOctave = (midiNoteName) => {
+    let octave = ''
+    octave = midiNoteName.toString()
+    octave = octave.slice(octave.length - 1)
+    return octave
+}
+
+module.exports = {
+    getMusicNotation,
+    getNoteOctave
+}
