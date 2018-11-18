@@ -35,7 +35,17 @@ const getNoteOctave = (midiNoteName) => {
     return octave
 }
 
+/**
+ * 
+ * @param {array} chordOctaves 
+ * @returns {integer} Chord base octave
+ */
+const getChordBaseOctave = (chordOctaves) => {
+    return Math.min(...chordOctaves)
+}
+
 module.exports = {
     getMusicNotation,
-    getNoteOctave
+    getNoteOctave,
+    getChordBaseOctave
 }
