@@ -49,7 +49,7 @@ function play(newChunk) {
     // First note is a chord
     if (newChunk[firstElementIndex].length > 1) {
         // get chord base octave
-        console.log(`> First note is a chord`)
+        // console.log(`> First note is a chord`)
         newChunk[firstElementIndex].forEach(el => {
             arChordOctaves.push(midi.getNoteOctave(el.name))
         })
@@ -57,7 +57,7 @@ function play(newChunk) {
         baseOctave = chordBaseOctave
     } else {
         // First note is a single note
-        console.log(`> First note is a single note`)
+        // console.log(`> First note is a single note`)
         let obj = [...newChunk[firstElementIndex]].forEach(el => {
             baseOctave = midi.getNoteOctave(el.midi)
         })
@@ -70,17 +70,17 @@ function play(newChunk) {
             let noteName = midi.getMusicNotation(key[0].midi)
             const currentNoteOctave = midi.getNoteOctave(key[0].name)
             let keyName = noteToKey.get(noteName)
-            console.log('----- single note ------')
-            console.log(`Base octave: ${baseOctave}`)
-            console.log(`Current octave: ${currentNoteOctave}`)
-            console.log('note: ' + noteName)
-            console.log('note name: ' + key[0].name)
-            console.log('duration: ' + noteDuration)
+            // console.log('----- single note ------')
+            // console.log(`Base octave: ${baseOctave}`)
+            // console.log(`Current octave: ${currentNoteOctave}`)
+            // console.log('note: ' + noteName)
+            // console.log('note name: ' + key[0].name)
+            // console.log('duration: ' + noteDuration)
 
             // Higher octave note
             if (currentNoteOctave > baseOctave) {
                 // set octave switch to high
-                console.log(`OSwitch: high`)
+                // console.log(`OSwitch: high`)
                 ks.batchTypeKey('shift', ks.BATCH_EVENT_KEY_PRESS)
                 ks.batchTypeKey(keyName, noteDuration, ks.BATCH_EVENT_KEY_DOWN)
                 ks.batchTypeKey(keyName, ks.BATCH_EVENT_KEY_UP)
@@ -88,7 +88,7 @@ function play(newChunk) {
             }
             if (currentNoteOctave < baseOctave) {
                 // set octave switch to low
-                console.log(`OSwitch: low`)
+                // console.log(`OSwitch: low`)
                 ks.batchTypeKey('control', ks.BATCH_EVENT_KEY_PRESS)
                 ks.batchTypeKey(keyName, noteDuration, ks.BATCH_EVENT_KEY_DOWN)
                 ks.batchTypeKey(keyName, ks.BATCH_EVENT_KEY_UP)
@@ -96,21 +96,21 @@ function play(newChunk) {
             }
             if (currentNoteOctave == baseOctave) {
                 // no changes needed
-                console.log(`OSwitch: neutral`)
+                // console.log(`OSwitch: neutral`)
                 ks.batchTypeKey(keyName, noteDuration, ks.BATCH_EVENT_KEY_DOWN)
                 ks.batchTypeKey(keyName, ks.BATCH_EVENT_KEY_UP)
             }
             notesCount++
         } else {
             // Chord
-            console.log('----- chord -----')
-            console.log(`Chord base octave: ${chordBaseOctave}`)
+            // console.log('----- chord -----')
+            // console.log(`Chord base octave: ${chordBaseOctave}`)
             let chord = [] // notes in chord
             let keyBoardChord = [] // notes mapped to keyboard keys
             let duration = 0 // chord duration in ms
             for (const note of key) {
-                console.log('note: ' + midi.getMusicNotation(note.midi))
-                console.log('duration: ' + note.duration * 1000)
+                // console.log('note: ' + midi.getMusicNotation(note.midi))
+                // console.log('duration: ' + note.duration * 1000)
                 chord.push(note.name)
                 keyBoardChord.push(noteToKey.get(midi.getMusicNotation(note.midi)))
                 duration = note.duration * 1000 // to get ms
@@ -119,11 +119,11 @@ function play(newChunk) {
             // get current chord octave
             const chordOctaves = chord.map(value => value = midi.getNoteOctave(value))
             const currChordOctave = midi.getChordBaseOctave(chordOctaves)
-            console.log(`Current chord base: ${currChordOctave}`)
+            // console.log(`Current chord base: ${currChordOctave}`)
             // Current chord is higher than tha base
             if (currChordOctave > chordBaseOctave) {
                 // set octave switch to high
-                console.log(`OSwitch: high`)
+                // console.log(`OSwitch: high`)
                 ks.batchTypeKey('shift', ks.BATCH_EVENT_KEY_PRESS)
                 ks.batchTypeCombination(keyBoardChord, duration, ks.BATCH_EVENT_KEY_DOWN)
                 ks.batchTypeCombination(keyBoardChord, ks.BATCH_EVENT_KEY_UP)
@@ -132,7 +132,7 @@ function play(newChunk) {
             // Current chord is lower than the base
             if (currChordOctave < chordBaseOctave) {
                 // set octave switch to low
-                console.log(`OSwitch: low`)
+                // console.log(`OSwitch: low`)
                 ks.batchTypeKey('control', ks.BATCH_EVENT_KEY_PRESS)
                 ks.batchTypeCombination(keyBoardChord, duration, ks.BATCH_EVENT_KEY_DOWN)
                 ks.batchTypeCombination(keyBoardChord, ks.BATCH_EVENT_KEY_UP)
@@ -140,13 +140,13 @@ function play(newChunk) {
             }
             // Current chord is equal to base
             if (currChordOctave == chordBaseOctave) {
-                console.log(`OSwitch: neutral`)
+                // console.log(`OSwitch: neutral`)
                 ks.batchTypeCombination(keyBoardChord, duration, ks.BATCH_EVENT_KEY_DOWN)
                 ks.batchTypeCombination(keyBoardChord, ks.BATCH_EVENT_KEY_UP)
             }
 
-            console.log('chord notes: ' + chord)
-            console.log('Length: ' + key.length)
+            // console.log('chord notes: ' + chord)
+            // console.log('Length: ' + key.length)
         }
     })
     console.log(`\nTotal notes: ${notesCount}`)
