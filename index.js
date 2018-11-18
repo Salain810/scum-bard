@@ -44,13 +44,13 @@ function play(newChunk) {
     let chordBaseOctave = 0
     let arChordOctaves = []
 
-    console.log(newChunk[0])
+    let firstElementIndex = Object.keys(newChunk)[0]
 
     // First note is a chord
-    if (newChunk[0].length > 1) {
+    if (newChunk[firstElementIndex].length > 1) {
         // get chord base octave
         console.log(`> First note is a chord`)
-        newChunk[0].forEach(el => {
+        newChunk[firstElementIndex].forEach(el => {
             arChordOctaves.push(midi.getNoteOctave(el.name))
         })
         chordBaseOctave = midi.getChordBaseOctave(arChordOctaves)
@@ -58,7 +58,7 @@ function play(newChunk) {
     } else {
         // First note is a single note
         console.log(`> First note is a single note`)
-        let obj = [...newChunk[0]].forEach(el => {
+        let obj = [...newChunk[firstElementIndex]].forEach(el => {
             baseOctave = midi.getNoteOctave(el.midi)
         })
         chordBaseOctave = baseOctave
