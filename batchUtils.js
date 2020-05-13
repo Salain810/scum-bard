@@ -1,7 +1,14 @@
 const ks = require('node-key-sender')
 const midi = require('./midi')
 
-function getFirstOctave(chords) {
+const resetCharacterOctave = () => {
+    // Send ctrl, ctrl, shift to reset the character to the neutral octave
+    ks.batchTypeKey('control', ks.BATCH_EVENT_KEY_PRESS)
+    ks.batchTypeKey('control', ks.BATCH_EVENT_KEY_PRESS)
+    ks.batchTypeKey('shift', ks.BATCH_EVENT_KEY_PRESS)
+}
+
+const getFirstOctave = (chords) => {
     const firstElementIndex = Object.keys(chords)[0]
     const firstChord = chords[firstElementIndex]
     // First note is a single note
@@ -16,7 +23,7 @@ function getFirstOctave(chords) {
     return midi.getChordBaseOctave(noteOctaves)
 }
 
-function batchSingleNote(note, firstOctave, keymap) {
+const batchSingleNote = (note, firstOctave, keymap) => {
     const noteDuration = note.duration * 1000 // to get ms 
     const noteName = midi.getMusicNotation(note.midi)
     const currentNoteOctave = midi.getNoteOctave(note.name)
@@ -33,7 +40,7 @@ function batchSingleNote(note, firstOctave, keymap) {
     })
 }
 
-function batchChord(notes, firstOctave, keymap) {
+const batchChord = (notes, firstOctave, keymap) => {
     // Chord
     // console.log('----- chord -----')
     // console.log(`Chord base octave: ${firstOctave}`)
@@ -56,7 +63,7 @@ function batchChord(notes, firstOctave, keymap) {
     // console.log('Length: ' + key.length)
 }
 
-function runBatch(batchOctave, firstOctave, callback) {
+const runBatch = (batchOctave, firstOctave, callback) => {
     let batchFunction
     if (batchOctave > firstOctave) {
         // Current octave is higher than the base
@@ -74,19 +81,20 @@ function runBatch(batchOctave, firstOctave, callback) {
     batchFunction(callback)
 }
 
-function batchHigherOctave(callback) {
+const batchHigherOctave = (callback) => {
     ks.batchTypeKey('shift', ks.BATCH_EVENT_KEY_PRESS)
     callback()
     ks.batchTypeKey('control', ks.BATCH_EVENT_KEY_PRESS)
 }
 
-function batchLowerOctave(callback) {
+const batchLowerOctave = (callback) => {
     ks.batchTypeKey('control', ks.BATCH_EVENT_KEY_PRESS)
     callback()
     ks.batchTypeKey('shift', ks.BATCH_EVENT_KEY_PRESS)
 }
 
 module.exports = {
+    resetCharacterOctave,
     getFirstOctave,
     batchSingleNote,
     batchChord

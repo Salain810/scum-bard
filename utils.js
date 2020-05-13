@@ -2,7 +2,7 @@ const fs = require('fs')
 const { exit } = require('process')
 const mc = require('midiconvert')
 
-function loadKeymap(keymapFile) {
+const loadKeymap = (keymapFile) => {
     if (!fs.existsSync(keymapFile)) {
         console.log(`[ERROR] Keymap file not found: ${keymapFile}`)
         exit(1)
@@ -16,7 +16,7 @@ function loadKeymap(keymapFile) {
     }
 }
 
-function loadChords(midiFileName, midiTrackNumber, callback) {
+const loadChords = (midiFileName, midiTrackNumber, callback) => {
     if (!fs.existsSync(midiFileName)) {
         console.log(`[ERROR] Unable to load midi file: ${midiFileName}`)
         exit(1)

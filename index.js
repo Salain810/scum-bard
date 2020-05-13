@@ -4,7 +4,7 @@ const ks = require('node-key-sender')
 const path = require('path')
 
 const { loadKeymap, loadChords } = require('./utils.js')
-const { getFirstOctave, batchSingleNote, batchChord } = require('./batchUtils.js')
+const { getFirstOctave, batchSingleNote, batchChord, resetCharacterOctave } = require('./batchUtils.js')
 
 const argv = yargs
     .usage('Usage: scum-bard.cmd --file [midi file]')
@@ -36,6 +36,7 @@ const keymap = loadKeymap(argv.keymap || defaultKeymap)
 
 loadChords(argv.file, argv.track, (chords) => {
     ks.startBatch()
+    resetCharacterOctave()
     let notesCount = 0
     const firstOctave = getFirstOctave(chords)
 
