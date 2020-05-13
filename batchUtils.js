@@ -17,9 +17,7 @@ const getFirstOctave = (chords) => {
     }
 
     // Get chord base octave
-    const noteOctaves = firstChord.map(el => {
-        midi.getNoteOctave(el.name)
-    })
+    const noteOctaves = firstChord.map(el => midi.getNoteOctave(el.name))
     return midi.getChordBaseOctave(noteOctaves)
 }
 
@@ -76,7 +74,7 @@ const runBatch = (batchOctave, firstOctave, callback) => {
     } else {
         // Current octave is equal to base
         // console.log(`OSwitch: neutral`)
-        batchFunction = callback
+        batchFunction = batchSameOctave
     }
     batchFunction(callback)
 }
@@ -91,6 +89,10 @@ const batchLowerOctave = (callback) => {
     ks.batchTypeKey('control', ks.BATCH_EVENT_KEY_PRESS)
     callback()
     ks.batchTypeKey('shift', ks.BATCH_EVENT_KEY_PRESS)
+}
+
+const batchSameOctave = (callback) => {
+    callback()
 }
 
 module.exports = {
