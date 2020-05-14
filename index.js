@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const yargs = require('yargs')
-const ks = require('node-key-sender')
+const ks = require('./node-key-sender/key-sender.js')
 const path = require('path')
 
 const { loadKeymap, loadChords } = require('./utils.js')

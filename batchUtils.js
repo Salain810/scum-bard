@@ -1,4 +1,4 @@
-const ks = require('node-key-sender')
+const ks = require('./node-key-sender/key-sender.js')
 const midi = require('./midi')
 
 const resetCharacterOctave = () => {
@@ -24,15 +24,15 @@ const getFirstOctave = (chords) => {
 const batchSingleNote = (note, firstOctave, keymap) => {
     const noteDuration = note.duration * 1000 // to get ms 
     const noteName = midi.getMusicNotation(note.midi)
-    const currentNoteOctave = midi.getNoteOctave(note.name)
+    const baseOctave = midi.getNoteOctave(note.name)
     // console.log('----- single note ------')
     // console.log(`Base octave: ${firstOctave}`)
-    // console.log(`Current octave: ${currentNoteOctave}`)
+    // console.log(`Current octave: ${baseOctave}`)
     // console.log('note: ' + noteName)
     // console.log('note name: ' + note.name)
     // console.log('duration: ' + noteDuration)
 
-    runBatch(currentNoteOctave, firstOctave, () => {
+    runBatch(baseOctave, firstOctave, () => {
         ks.batchTypeKey(keymap[noteName], noteDuration, ks.BATCH_EVENT_KEY_DOWN)
         ks.batchTypeKey(keymap[noteName], ks.BATCH_EVENT_KEY_UP)
     })
@@ -50,9 +50,9 @@ const batchChord = (notes, firstOctave, keymap) => {
 
     const duration = notes[0].duration * 1000
     // get current chord octave
-    const currChordOctave = midi.getChordBaseOctave(chordOctaves)
-    // console.log(`Current chord base: ${currChordOctave}`)
-    runBatch(currChordOctave, firstOctave, () => {
+    const baseOctave = midi.getChordBaseOctave(chordOctaves)
+    // console.log(`Current chord base: ${baseOctave}`)
+    runBatch(baseOctave, firstOctave, () => {
         ks.batchTypeCombination(chordKeys, duration, ks.BATCH_EVENT_KEY_DOWN)
         ks.batchTypeCombination(chordKeys, ks.BATCH_EVENT_KEY_UP)
     })
