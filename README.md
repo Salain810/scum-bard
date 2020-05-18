@@ -15,7 +15,7 @@ This project requires that Node.js and Java are both installed.
 ### Install scum-bard
 After Node.js has been installed, the `scum-bard` application can be install with `npm` (node package manager):
 ```shell
-npm install -g gitlab:megahartz/scum-bard
+npm install -g gitlab:douglasmiller/scum-bard
 ```
 
 ## Preparing MIDI file
@@ -41,11 +41,14 @@ You will have ~2 seconds to Alt-Tab back into Scum before the script starts send
 
 ### Additional Parameters
 
+#### Select Track To Play
+
 Many MIDI files contain multiple tracks. `scum-bard` will try to play the first track (track `0`) by default. If you want to play a different track, then the track number can be specified on the command line with the `--track` flag:
 
 ```shell
 scum-bard.cmd --file path/to/file.mid --track 1
 ```
+#### Define Custom Keybindings
 
 If you want to specify keybindings that are different from the default keybindings for instruments in Scum, then you can provide a custom keymap file with the `--keymap` flag:
 
@@ -54,6 +57,13 @@ scum-bard.cmd --file path\to\file.mid --keymap path\to\custom-keymap.json
 ```
 
 A custom keymap file **must** be written as a valid JSON file. See the [default keymap.json](keymap.json) for reference.
+
+#### Listing Available Tracks
+
+The `--list-tracks` flag can be specified to list the tracks that can be played using `scum-bard`. This is useful when you are unsure about which track to play.
+
+```shell
+```
 
 ## Stopping scum-bard
 

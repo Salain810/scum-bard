@@ -3,8 +3,9 @@ const yargs = require('yargs')
 const ks = require('./node-key-sender/key-sender.js')
 const path = require('path')
 
-const { loadKeymap, loadChords } = require('./utils.js')
+const { loadKeymap, loadChords, loadTracks } = require('./utils.js')
 const { getFirstOctave, batchSingleNote, batchChord, resetCharacterOctave } = require('./batchUtils.js')
+const { exit } = require('process')
 
 const argv = yargs
     .usage('Usage: scum-bard.cmd --file [midi file]')
@@ -25,7 +26,23 @@ const argv = yargs
         type: 'string',
         description: 'Custom keymap.json file'
     })
+    .option('list-tracks', {
+        alias: 'l',
+        type: 'boolean',
+        default: false,
+        description: 'List available tracks'
+    })
     .argv
+
+if (argv["list-tracks"]) {
+    loadTracks(argv.file, (tracks) => {
+        tracks.forEach(track => {
+            const { id, name, instrument, instrumentFamily} = track
+            console.log(`Track ${id}: ${name} - Instrument: ${instrument} (${instrumentFamily})`)
+        });
+        exit(0)
+    })
+}
 
 const defaultKeymap = [
     __dirname,
