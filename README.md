@@ -18,6 +18,8 @@ After Node.js has been installed, the `scum-bard` application can be install wit
 npm install -g gitlab:douglasmiller/scum-bard
 ```
 
+Alternatively, you can just clone this repository and run the application directly with node.
+
 ## Preparing MIDI file
 But if you still managed to find a suitable midi, keep in mind the fact that midi files are polyphonic, meaning that there can be more than 1 midi track playing at the same time. You have to feed a specific track number to scum-bard in that case.
 
@@ -38,6 +40,12 @@ scum-bard.cmd --file path/to/file.mid
 Before launching a script make sure that your character is holding an instrument and is in "play instrument" mode.
 
 You will have ~2 seconds to Alt-Tab back into Scum before the script starts sending keystrokes.
+
+If you decided to clone this repository, I assume that you already know how to run the application. Just in case:
+
+```shell
+node.exe ./index.js --file path/to/file.mid
+```
 
 ### Additional Parameters
 
