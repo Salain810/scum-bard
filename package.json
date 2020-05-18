@@ -1,18 +1,26 @@
 {
   "name": "scum-bard",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Scum music box",
   "main": "index.js",
+  "bin": {
+    "scum-bard": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Paul Rin <megaharts@gmail.com>",
+  "author": "Paul Rin <megahartz@gmail.com>",
+  "contributors": [
+    "Paul Rin <megahartz@gmail.com>",
+    "Douglas Miller <doug@douglas-miller.com>"
+  ],
   "license": "ISC",
   "dependencies": {
-    "babel": "^6.23.0",
-    "eslint": "^5.8.0",
-    "lodash": "^4.17.11",
-    "midi-parser-js": "^3.1.4",
-    "midiconvert": "^0.4.7"
+    "midi-parser-js": "^4.0.4",
+    "midiconvert": "^0.4.7",
+    "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.8.0"
   }
 }

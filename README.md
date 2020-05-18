@@ -6,23 +6,19 @@ The quality of the "output" heavily depends on the midi file.
 So, for example, if you are using tabbing software to create a tab first and then export it to midi, keep the source tab as simple as you can: e.g., no odd time signatures, no fancy legatos, dead notes, palm mutes and so on.  
 
 ## Installation
-In order to run this script, you need to have a Node.js installed. You can grab it here https://nodejs.org/en/.
-If you have no JRE installed, grab it from Oracle's website.
-
-### Clone this repo
-To clone this repo run:
-```console
-git clone https://gitlab.com/megahartz/scum-bard.git
-```
-or download it as a *.zip file
 
 ### Install dependencies
-Inside you project directory run
+This project requires that Node.js and Java are both installed.
+* Install Node.js from https://nodejs.org/
+* Install Java from https://www.java.com/en/download/manual.jsp
 
-```bash
-npm install
+### Install scum-bard
+After Node.js has been installed, the `scum-bard` application can be install with `npm` (node package manager):
+```shell
+npm install -g gitlab:megahartz/scum-bard
 ```
-This will download all the needed node packages.
+
+Alternatively, you can just clone this repository and run the application directly with node.
 
 ## Preparing MIDI file
 But if you still managed to find a suitable midi, keep in mind the fact that midi files are polyphonic, meaning that there can be more than 1 midi track playing at the same time. You have to feed a specific track number to scum-bard in that case.
@@ -33,17 +29,50 @@ But if you still managed to find a suitable midi, keep in mind the fact that mid
 
 Alternatively, you can use any tabbing software to export tabs to MIDI. I'm personally using Guitar Pro.
 
-## Starting the show
-Script accepts 2 parameters: `midiFileName` and `midiTrackNumber`.
+## Running scum-bard
 
-`midiFileName` - file name without extention, relative to /data dir.  
-`midiTrackNumber` - MIDI track number, starts from 0
+The `scum-bard` application expects that the filename of the MIDI file be specified with the `--file` flag when running the command:
+
+```shell
+scum-bard.cmd --file path/to/file.mid
+```
 
 Before launching a script make sure that your character is holding an instrument and is in "play instrument" mode.
 
-Tab out and type in console:
+You will have ~2 seconds to Alt-Tab back into Scum before the script starts sending keystrokes.
 
-```console
-node index.js 13 0
+If you decided to clone this repository, I assume that you already know how to run the application. Just in case:
+
+```shell
+node.exe ./index.js --file path/to/file.mid
 ```
-Hit enter. You'll have ~2s to tab back into the game before script starts sending keystrokes.
+
+### Additional Parameters
+
+#### Select Track To Play
+
+Many MIDI files contain multiple tracks. `scum-bard` will try to play the first track (track `0`) by default. If you want to play a different track, then the track number can be specified on the command line with the `--track` flag:
+
+```shell
+scum-bard.cmd --file path/to/file.mid --track 1
+```
+#### Define Custom Keybindings
+
+If you want to specify keybindings that are different from the default keybindings for instruments in Scum, then you can provide a custom keymap file with the `--keymap` flag:
+
+```shell
+scum-bard.cmd --file path\to\file.mid --keymap path\to\custom-keymap.json
+```
+
+A custom keymap file **must** be written as a valid JSON file. See the [default keymap.json](keymap.json) for reference.
+
+#### Listing Available Tracks
+
+The `--list-tracks` flag can be specified to list the tracks that can be played using `scum-bard`. This is useful when you are unsure about which track to play.
+
+```shell
+```
+
+## Stopping scum-bard
+
+The applicaion will exit automatically when it has finished playing all of the notes/chords in the MIDI file. If you want to exit `scum-bard` before the song has completed, then press Ctrl+c in the shell where you are running the command.
