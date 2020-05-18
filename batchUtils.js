@@ -10,14 +10,8 @@ const resetCharacterOctave = () => {
 
 const getFirstOctave = (chords) => {
     const firstElementIndex = Object.keys(chords)[0]
-    const firstChord = chords[firstElementIndex]
-    // First note is a single note
-    if (firstChord.length === 0) {
-        return midi.getNoteOctave(firstChord.midi)
-    }
-
     // Get chord base octave
-    const noteOctaves = firstChord.map(el => midi.getNoteOctave(el.name))
+    const noteOctaves = chords[firstElementIndex].map(el => midi.getNoteOctave(el.name))
     return midi.getChordBaseOctave(noteOctaves)
 }
 
