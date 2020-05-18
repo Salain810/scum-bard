@@ -15,7 +15,7 @@ This project requires that Node.js and Java are both installed.
 ### Install scum-bard
 After Node.js has been installed, the `scum-bard` application can be install with `npm` (node package manager):
 ```shell
-npm install -g gitlab:douglasmiller/scum-bard
+npm install -g gitlab:megahartz/scum-bard
 ```
 
 Alternatively, you can just clone this repository and run the application directly with node.
