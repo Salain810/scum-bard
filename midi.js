@@ -1,4 +1,4 @@
-const midiToNotes = new Map;
+const midiToNotes = new Map()
 midiToNotes.set(0, 'c')
 midiToNotes.set(1, 'c#')
 midiToNotes.set(2, 'd')
@@ -17,35 +17,33 @@ midiToNotes.set(11, 'b')
  * @param {integer} midiNote MIDI note value (int)
  */
 const getMusicNotation = (midiNote) => {
-    // We wont be using octaves (A3==A4==A0),
-    // because SCUM doesn't support octaves
-    let keysArray = [...midiToNotes.keys()]
-    while (!keysArray.includes(midiNote)) {
-        // keep substracting a full octave (12 notes)
-        // until we get the base value of octave -2
-        midiNote -= 12
-    }
-    return midiToNotes.get(midiNote);
+  let keysArray = [...midiToNotes.keys()]
+  while (!keysArray.includes(midiNote)) {
+    // keep substracting a full octave (12 notes)
+    // until we get the base value of octave -2
+    midiNote -= 12
+  }
+  return midiToNotes.get(midiNote)
 }
 
 const getNoteOctave = (midiNoteName) => {
-    let octave = ''
-    octave = midiNoteName.toString()
-    octave = octave.slice(octave.length - 1)
-    return octave
+  let octave = ''
+  octave = midiNoteName.toString()
+  octave = octave.slice(octave.length - 1)
+  return octave
 }
 
 /**
- * 
- * @param {array} chordOctaves 
+ *
+ * @param {array} chordOctaves
  * @returns {integer} Chord base octave
  */
 const getChordBaseOctave = (chordOctaves) => {
-    return Math.min(...chordOctaves)
+  return Math.min(...chordOctaves)
 }
 
 module.exports = {
-    getMusicNotation,
-    getNoteOctave,
-    getChordBaseOctave
+  getMusicNotation,
+  getNoteOctave,
+  getChordBaseOctave,
 }
