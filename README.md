@@ -11,7 +11,17 @@ It automatically compresses songs to fit SCUM's 3-octave instrument range, clean
 
 ## Installation
 
-After installing Node.js and Java (see Requirements above), clone this repository and install dependencies:
+After installing Node.js and Java (see Requirements above):
+
+### Install with npm
+
+```shell
+npm install -g github:Salain810/scum-bard
+```
+
+This installs `scum-bard` as a global command you can run from anywhere.
+
+### Or clone and run directly
 
 ```shell
 git clone https://github.com/Salain810/scum-bard.git
