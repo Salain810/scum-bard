@@ -4,7 +4,7 @@ const ks = require('./node-key-sender/key-sender.js')
 const path = require('path')
 
 const { loadKeymap, loadChords, loadTracks } = require('./utils.js')
-const { getFirstOctave, batchSingleNote, batchChord, resetCharacterOctave } = require('./batchUtils.js')
+const { compressChords, getFirstOctave, batchSingleNote, batchChord, resetCharacterOctave } = require('./batchUtils.js')
 const { exit } = require('process')
 
 const argv = yargs
@@ -55,15 +55,22 @@ loadChords(argv.file, argv.track, (chords) => {
     ks.startBatch()
     resetCharacterOctave()
     let notesCount = 0
+    compressChords(chords)
     const firstOctave = getFirstOctave(chords)
 
-    Object.values(chords).forEach(chord => {
-        // Single note
+    // Sort chord events by time for correct playback order and gap calculation
+    const chordTimes = Object.keys(chords).map(Number).sort((a, b) => a - b)
+
+    chordTimes.forEach((time, i) => {
+        const chord = chords[time]
+        const nextTime = i < chordTimes.length - 1 ? chordTimes[i + 1] : time + chord[0].duration
+        const gap = nextTime - time
+
         if (chord.length == 1) {
-            batchSingleNote(chord[0], firstOctave, keymap)
+            batchSingleNote(chord[0], firstOctave, keymap, gap)
             notesCount++
         } else {
-            batchChord(chord, firstOctave, keymap)
+            batchChord(chord, firstOctave, keymap, gap)
             notesCount += chord.length
         }
     })

@@ -1,36 +1,21 @@
-const midiToNotes = new Map()
-midiToNotes.set(0, 'c')
-midiToNotes.set(1, 'c#')
-midiToNotes.set(2, 'd')
-midiToNotes.set(3, 'd#')
-midiToNotes.set(4, 'e')
-midiToNotes.set(5, 'f')
-midiToNotes.set(6, 'f#')
-midiToNotes.set(7, 'g')
-midiToNotes.set(8, 'g#')
-midiToNotes.set(9, 'a')
-midiToNotes.set(10, 'a#')
-midiToNotes.set(11, 'b')
+const NOTE_NAMES = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b']
 
 /**
  * @function getMusicNotation
- * @param {integer} midiNote MIDI note value (int)
+ * @param {number} midiNote MIDI note value (0-127)
+ * @returns {string} Note name in lowercase (e.g. 'c', 'f#')
  */
 const getMusicNotation = (midiNote) => {
-  let keysArray = [...midiToNotes.keys()]
-  while (!keysArray.includes(midiNote)) {
-    // keep substracting a full octave (12 notes)
-    // until we get the base value of octave -2
-    midiNote -= 12
-  }
-  return midiToNotes.get(midiNote)
+  return NOTE_NAMES[midiNote % 12]
 }
 
+/**
+ * @function getNoteOctave
+ * @param {string} midiNoteName Note name with octave (e.g. 'C4', 'F#5')
+ * @returns {string} Octave number as string
+ */
 const getNoteOctave = (midiNoteName) => {
-  let octave = ''
-  octave = midiNoteName.toString()
-  octave = octave.slice(octave.length - 1)
-  return octave
+  return midiNoteName.toString().slice(-1)
 }
 
 /**
