@@ -11,16 +11,10 @@ It automatically compresses songs to fit SCUM's 3-octave instrument range, clean
 
 ## Installation
 
-After installing Node.js and Java (see Requirements above):
+After installing Node.js and Java (see Requirements above), clone this repository and install dependencies:
 
 ```shell
-npm install -g gitlab:megahartz/scum-bard
-```
-
-Or clone the repository and run directly:
-
-```shell
-git clone <repo-url>
+git clone https://github.com/Salain810/scum-bard.git
 cd scum-bard
 npm install
 ```
@@ -97,12 +91,6 @@ Make sure your character is holding an instrument and is in "play instrument" mo
 ### Play a MIDI file
 
 ```shell
-scum-bard.cmd --file path/to/file.mid
-```
-
-Or from the cloned repository:
-
-```shell
 node index.js --file path/to/file.mid
 ```
 
@@ -140,6 +128,10 @@ See [keymap.json](keymap.json) for the default mapping format.
 ## Stopping Playback
 
 The application exits automatically when the song finishes. To stop early, press `Ctrl+C` in the terminal.
+
+## Credits
+
+Originally created by [Paul Rin (megahartz)](https://gitlab.com/megahartz/scum-bard). This fork adds automatic octave compression, timing fixes, chord detection improvements, and duplicate note cleanup.
 
 ## License
 
