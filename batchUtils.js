@@ -83,11 +83,15 @@ const compressChords = (chords) => {
     return chords
 }
 
+// Delay for the one-time octave reset at start (needs to be long enough for game to register)
+const RESET_DELAY = 50
+// Minimal delay for per-note octave shifts during playback
+const SHIFT_DELAY = 1
+
 const resetCharacterOctave = () => {
-    // Send ctrl, ctrl, shift to reset the character to the neutral octave
-    ks.batchTypeKey('control', 0, ks.BATCH_EVENT_KEY_PRESS)
-    ks.batchTypeKey('control', 0, ks.BATCH_EVENT_KEY_PRESS)
-    ks.batchTypeKey('shift', 0, ks.BATCH_EVENT_KEY_PRESS)
+    // Send ctrl, ctrl to reset the character to the lowest octave
+    ks.batchTypeKey('control', RESET_DELAY, ks.BATCH_EVENT_KEY_PRESS)
+    ks.batchTypeKey('control', RESET_DELAY, ks.BATCH_EVENT_KEY_PRESS)
 }
 
 const getFirstOctave = (chords) => {
@@ -153,15 +157,15 @@ const runBatch = (batchOctave, firstOctave, callback) => {
     // Clamp to ±1 octave (SCUM instruments only support 3 octaves)
     const diff = Math.max(-1, Math.min(1, batchOctave - firstOctave))
     if (diff > 0) {
-        ks.batchTypeKey('shift', ks.BATCH_EVENT_KEY_PRESS)
+        ks.batchTypeKey('shift', SHIFT_DELAY, ks.BATCH_EVENT_KEY_PRESS)
     } else if (diff < 0) {
-        ks.batchTypeKey('control', ks.BATCH_EVENT_KEY_PRESS)
+        ks.batchTypeKey('control', SHIFT_DELAY, ks.BATCH_EVENT_KEY_PRESS)
     }
     callback()
     if (diff > 0) {
-        ks.batchTypeKey('control', ks.BATCH_EVENT_KEY_PRESS)
+        ks.batchTypeKey('control', SHIFT_DELAY, ks.BATCH_EVENT_KEY_PRESS)
     } else if (diff < 0) {
-        ks.batchTypeKey('shift', ks.BATCH_EVENT_KEY_PRESS)
+        ks.batchTypeKey('shift', SHIFT_DELAY, ks.BATCH_EVENT_KEY_PRESS)
     }
 }
 

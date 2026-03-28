@@ -87,7 +87,14 @@ const loadChords = (midiFileName, midiTrackNumber, callback) => {
 
         // Ensure that chords were found in the midi file
         if (Object.keys(chords).length == 0) {
-            console.error('[ERROR]', `Unable to load chords for ${midiFileName} track ${midiTrackNumber}`)
+            console.error(`[ERROR] Track ${midiTrackNumber} has no playable notes.`)
+            const playable = midi.tracks
+                .map((t, i) => ({ id: i, name: t.name, notes: t.notes.length }))
+                .filter(t => t.notes > 0)
+            if (playable.length > 0) {
+                console.error('Available tracks:')
+                playable.forEach(t => console.error(`  --track ${t.id}: ${t.name} (${t.notes} notes)`))
+            }
             exit(1)
         }
         callback(chords)
