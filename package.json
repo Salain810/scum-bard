@@ -20,7 +20,7 @@
   ],
   "license": "ISC",
   "dependencies": {
-    "midiconvert": "^0.4.7",
+    "midi-file-parser": "^1.0.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {

@@ -83,96 +83,93 @@ const compressChords = (chords) => {
     return chords
 }
 
-// Delay for the one-time octave reset at start (needs to be long enough for game to register)
+// Delay for the one-time octave reset at start
 const RESET_DELAY = 50
-// Minimal delay for per-note octave shifts during playback
-const SHIFT_DELAY = 1
+// Delay for per-note octave shifts (needs to be long enough for game to register)
+const SHIFT_DELAY = 20
+
+// Track the instrument's current octave offset (0=LOW, 1=MID, 2=HIGH)
+let currentOctaveOffset = 0
 
 const resetCharacterOctave = () => {
-    // Send ctrl, ctrl to reset the character to the lowest octave
-    ks.batchTypeKey('control', RESET_DELAY, ks.BATCH_EVENT_KEY_PRESS)
-    ks.batchTypeKey('control', RESET_DELAY, ks.BATCH_EVENT_KEY_PRESS)
+    // Spam ctrl to guarantee we hit the lowest octave regardless of starting position
+    for (let i = 0; i < 5; i++) {
+        ks.batchTypeKey('control', RESET_DELAY, ks.BATCH_EVENT_KEY_PRESS)
+    }
+    currentOctaveOffset = 0
 }
 
-const getFirstOctave = (chords) => {
-    // Find the optimal center octave that fits the most notes within ±1
-    // This maximizes accuracy within SCUM's 3-octave limit
+const getBaseOctave = (chords) => {
+    // Return the lowest octave in the song — maps to the instrument's LOW position
     const allOctaves = []
     Object.values(chords).forEach(chord => {
         chord.forEach(note => allOctaves.push(parseInt(midi.getNoteOctave(note.name))))
     })
     const minOct = Math.min(...allOctaves)
     const maxOct = Math.max(...allOctaves)
-    let bestCenter = minOct + 1
-    let bestCount = 0
-    for (let center = minOct; center <= maxOct; center++) {
-        const inRange = allOctaves.filter(o => o >= center - 1 && o <= center + 1).length
-        if (inRange > bestCount) {
-            bestCount = inRange
-            bestCenter = center
+    const span = maxOct - minOct
+    console.log(`Octave mapping: LOW=${minOct} MID=${minOct + 1} HIGH=${minOct + 2} (song uses ${span + 1} of 3)`)
+    return minOct
+}
+
+const shiftToOctave = (targetOffset) => {
+    const diff = targetOffset - currentOctaveOffset
+    if (diff > 0) {
+        for (let i = 0; i < diff; i++) {
+            ks.batchTypeKey('shift', SHIFT_DELAY, ks.BATCH_EVENT_KEY_PRESS)
+        }
+    } else if (diff < 0) {
+        for (let i = 0; i < -diff; i++) {
+            ks.batchTypeKey('control', SHIFT_DELAY, ks.BATCH_EVENT_KEY_PRESS)
         }
     }
-    const total = allOctaves.length
-    const clamped = total - bestCount
-    if (clamped > 0) {
-        console.log(`Octave optimization: ${bestCount}/${total} notes in range (octaves ${bestCenter - 1}-${bestCenter + 1}), ${clamped} notes clamped`)
-    }
-    return String(bestCenter)
+    currentOctaveOffset = targetOffset
+    return Math.abs(diff) * SHIFT_DELAY
 }
 
-const batchSingleNote = (note, firstOctave, keymap, gapSeconds) => {
+const batchSingleNote = (note, baseOctave, keymap, gapSeconds) => {
+    const noteOctave = parseInt(midi.getNoteOctave(note.name))
+    const targetOffset = Math.max(0, Math.min(2, noteOctave - baseOctave))
+
+    const shiftOverhead = Math.abs(targetOffset - currentOctaveOffset) * SHIFT_DELAY
     const noteDuration = note.duration * 1000
     const gapMs = gapSeconds * 1000
-    const holdTime = Math.round(Math.min(noteDuration, gapMs))
-    const restTime = Math.round(Math.max(0, gapMs - holdTime))
+    const availableMs = Math.max(1, gapMs - shiftOverhead)
+    const holdTime = Math.round(Math.min(noteDuration, availableMs))
+    const restTime = Math.round(Math.max(0, availableMs - holdTime))
     const noteName = midi.getMusicNotation(note.midi)
-    const baseOctave = midi.getNoteOctave(note.name)
 
-    runBatch(baseOctave, firstOctave, () => {
-        ks.batchTypeKey(keymap[noteName], holdTime, ks.BATCH_EVENT_KEY_DOWN)
-        ks.batchTypeKey(keymap[noteName], restTime, ks.BATCH_EVENT_KEY_UP)
-    })
+    shiftToOctave(targetOffset)
+    ks.batchTypeKey(keymap[noteName], holdTime, ks.BATCH_EVENT_KEY_DOWN)
+    ks.batchTypeKey(keymap[noteName], restTime, ks.BATCH_EVENT_KEY_UP)
 }
 
-const batchChord = (notes, firstOctave, keymap, gapSeconds) => {
+const batchChord = (notes, baseOctave, keymap, gapSeconds) => {
     const { chordKeys, chordOctaves } = notes.reduce((acc, note) => {
-        acc.chordOctaves.push(midi.getNoteOctave(note.name))
+        acc.chordOctaves.push(parseInt(midi.getNoteOctave(note.name)))
         acc.chordKeys.push(keymap[midi.getMusicNotation(note.midi)])
         return acc
     }, { chordKeys: [], chordOctaves: [] })
 
+    const chordBaseOctave = Math.min(...chordOctaves)
+    const targetOffset = Math.max(0, Math.min(2, chordBaseOctave - baseOctave))
+
+    const shiftOverhead = Math.abs(targetOffset - currentOctaveOffset) * SHIFT_DELAY
     const maxDuration = Math.max(...notes.map(n => n.duration)) * 1000
     const gapMs = gapSeconds * 1000
-    const holdTime = Math.round(Math.min(maxDuration, gapMs))
-    const restTime = Math.round(Math.max(0, gapMs - holdTime))
+    const availableMs = Math.max(1, gapMs - shiftOverhead)
+    const holdTime = Math.round(Math.min(maxDuration, availableMs))
+    const restTime = Math.round(Math.max(0, availableMs - holdTime))
 
-    const baseOctave = midi.getChordBaseOctave(chordOctaves)
-    runBatch(baseOctave, firstOctave, () => {
-        ks.batchTypeCombination(chordKeys, holdTime, ks.BATCH_EVENT_KEY_DOWN)
-        ks.batchTypeCombination(chordKeys, restTime, ks.BATCH_EVENT_KEY_UP)
-    })
-}
-
-const runBatch = (batchOctave, firstOctave, callback) => {
-    // Clamp to ±1 octave (SCUM instruments only support 3 octaves)
-    const diff = Math.max(-1, Math.min(1, batchOctave - firstOctave))
-    if (diff > 0) {
-        ks.batchTypeKey('shift', SHIFT_DELAY, ks.BATCH_EVENT_KEY_PRESS)
-    } else if (diff < 0) {
-        ks.batchTypeKey('control', SHIFT_DELAY, ks.BATCH_EVENT_KEY_PRESS)
-    }
-    callback()
-    if (diff > 0) {
-        ks.batchTypeKey('control', SHIFT_DELAY, ks.BATCH_EVENT_KEY_PRESS)
-    } else if (diff < 0) {
-        ks.batchTypeKey('shift', SHIFT_DELAY, ks.BATCH_EVENT_KEY_PRESS)
-    }
+    shiftToOctave(targetOffset)
+    ks.batchTypeCombination(chordKeys, holdTime, ks.BATCH_EVENT_KEY_DOWN)
+    ks.batchTypeCombination(chordKeys, restTime, ks.BATCH_EVENT_KEY_UP)
 }
 
 module.exports = {
     compressChords,
     resetCharacterOctave,
-    getFirstOctave,
+    getBaseOctave,
     batchSingleNote,
     batchChord
 }
