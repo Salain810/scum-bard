@@ -100,7 +100,9 @@ const resetCharacterOctave = () => {
 }
 
 const getBaseOctave = (chords) => {
-    // Return the lowest octave in the song — maps to the instrument's LOW position
+    // Find the optimal base octave that keeps the most notes at LOW (offset 0).
+    // Uses the center of the densest 3-octave window, then maps center-1 to LOW
+    // so center lands on MID — matching how SCUM instruments play from the lowest position.
     const allOctaves = []
     Object.values(chords).forEach(chord => {
         chord.forEach(note => allOctaves.push(parseInt(midi.getNoteOctave(note.name))))
@@ -108,8 +110,29 @@ const getBaseOctave = (chords) => {
     const minOct = Math.min(...allOctaves)
     const maxOct = Math.max(...allOctaves)
     const span = maxOct - minOct
-    console.log(`Octave mapping: LOW=${minOct} MID=${minOct + 1} HIGH=${minOct + 2} (song uses ${span + 1} of 3)`)
-    return minOct
+
+    // For 1-2 octave songs, just use the max octave as base so everything stays at LOW
+    if (span <= 1) {
+        console.log(`Octave mapping: all notes at LOW (${span + 1} octave(s), range ${minOct}-${maxOct})`)
+        return maxOct
+    }
+
+    // For 3-octave songs, find the center with the most notes and map it to LOW
+    let bestCenter = minOct + 1
+    let bestCount = 0
+    for (let center = minOct; center <= maxOct; center++) {
+        const inRange = allOctaves.filter(o => o >= center - 1 && o <= center + 1).length
+        if (inRange > bestCount) {
+            bestCount = inRange
+            bestCenter = center
+        }
+    }
+
+    // Map bestCenter to LOW (offset 0) — notes below get clamped to LOW,
+    // notes above shift to MID/HIGH
+    const base = bestCenter
+    console.log(`Octave mapping: LOW=${base} MID=${base + 1} HIGH=${base + 2} (center=${bestCenter}, range ${minOct}-${maxOct})`)
+    return base
 }
 
 const shiftToOctave = (targetOffset) => {
