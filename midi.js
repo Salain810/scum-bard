@@ -11,24 +11,15 @@ const getMusicNotation = (midiNote) => {
 
 /**
  * @function getNoteOctave
- * @param {string} midiNoteName Note name with octave (e.g. 'C4', 'F#5')
+ * @param {string} midiNoteName Note name with octave (e.g. 'C4', 'F#5', 'C-1')
  * @returns {string} Octave number as string
  */
 const getNoteOctave = (midiNoteName) => {
-  return midiNoteName.toString().slice(-1)
-}
-
-/**
- *
- * @param {array} chordOctaves
- * @returns {integer} Chord base octave
- */
-const getChordBaseOctave = (chordOctaves) => {
-  return Math.min(...chordOctaves)
+  const match = midiNoteName.toString().match(/-?\d+$/)
+  return match ? match[0] : '0'
 }
 
 module.exports = {
   getMusicNotation,
   getNoteOctave,
-  getChordBaseOctave,
 }
